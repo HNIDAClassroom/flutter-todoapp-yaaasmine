@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:todolist_app/widgets/tasks.dart';
-import 'package:todolist_app/widgets/ThemeProvider.dart';
+
 
 class signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-     final themeProvider = Provider.of<ThemeProvider>(context);
+  
     return Scaffold(
-     backgroundColor: themeProvider.currentTheme.primaryColorLight,
+    
      
       appBar: AppBar(
         title: Text('Create an Account'),
-        backgroundColor: themeProvider.currentTheme.primaryColorLight,
+
      
       ),
       body: Center(

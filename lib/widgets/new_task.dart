@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todolist_app/models/task.dart';
 
 class NewTask extends StatefulWidget {
-  const NewTask({super.key});
+  const NewTask({super.key, required this.onAddTask});
+  final void Function(Task task) onAddTask;
   @override
   State<NewTask> createState() {
     return _NewTaskState();
@@ -9,21 +11,22 @@ class NewTask extends StatefulWidget {
 }
 
 class _NewTaskState extends State<NewTask> {
+  Category _selectedCategory = Category.personal;
+
+  final _titleController = TextEditingController();
   var _enteredTitle = '';
 
   void _saveTitleInput(String inputValue) {
     _enteredTitle = inputValue;
   }
 
-  final _titleController = TextEditingController();
-
   @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
   }
-     void _submitTaskData() {
-   
+
+  void _submitTaskData() {
     if (_titleController.text.trim().isEmpty) {
       showDialog(
         context: context,
@@ -43,7 +46,12 @@ class _NewTaskState extends State<NewTask> {
       );
       return;
     }
-   }
+    widget.onAddTask(Task(
+        title: _titleController.text,
+        date: DateTime(2023, 10, 16, 14, 30),
+        category: _selectedCategory,
+        description: ''));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +66,26 @@ class _NewTaskState extends State<NewTask> {
               label: Text('Task title'),
             ),
           ),
-
           Row(
             children: [
+              DropdownButton<Category>(
+                value: _selectedCategory,
+                items: Category.values
+                    .map((category) => DropdownMenuItem<Category>(
+                          value: category,
+                          child: Text(
+                            category.name.toUpperCase(),
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCategory = value!;
+                  });
+                },
+              ),
               ElevatedButton(
-                onPressed: _submitTaskData,
+                onPressed: _submitTaskData, // Call the _submitTaskData function
                 child: const Text('Enregistrer'),
               ),
             ],
