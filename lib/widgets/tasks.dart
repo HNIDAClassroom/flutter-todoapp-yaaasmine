@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
+import 'package:todolist_app/sevices/firestore.dart';
 import 'package:todolist_app/widgets/new_task.dart';
 import 'package:todolist_app/widgets/tasks_list.dart';
 
@@ -12,7 +13,9 @@ class Tasks extends StatefulWidget {
   }
 }
 
+ 
 class _TasksState extends State<Tasks> {
+   final FirestoreService firestoreService= FirestoreService();
   List<Task> _registredTasks = [
     Task(
     title: 'Task 1',
@@ -34,14 +37,21 @@ class _TasksState extends State<Tasks> {
     ),
     ];
   
-    void _openAddTaskOverlay() {
+   void _addTask(Task task) async {
+  setState(() {
+    _registredTasks.add(task);
+    firestoreService.addTask(task);
+    Navigator.pop(context);
+  });
+}
+
+void _openAddTaskOverlay() {
   showModalBottomSheet(
     context: context,
-    builder: (ctx) => NewTask(onAddTask: (Task task) {
-      // Define the onAddTask function here
-    }),
+    builder: (ctx) => NewTask(onAddTask: _addTask),
   );
 }
+
 
   @override
   Widget build(BuildContext context) {
