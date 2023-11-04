@@ -55,7 +55,7 @@ class _NewTaskState extends State<NewTask> {
       Task(
         title: _titleController.text,
          description: description,
-        date: DateTime(2023, 10, 16, 14, 30),
+        //date: DateTime(2023, 10, 16, 14, 30),
         category: _selectedCategory,
        ));
   }

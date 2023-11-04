@@ -12,21 +12,26 @@ class AuthVerify extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return SignInScreen(
-            providers: [
-              EmailAuthProvider(),
-            ],
-            headerBuilder: (context, constraints, shrinkOffset) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                ),
-              );
-            },
-          );
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            return Tasks();
+          } else {
+            return SignInScreen(
+              providers: [
+                EmailAuthProvider(),
+              ],
+              headerBuilder: (context, constraints, shrinkOffset) {
+                return Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                  ),
+                );
+              },
+            );
+          }
         }
+       // return CircularProgressIndicator(); // You can show a loading indicator here.
         
         return const Tasks();
       },

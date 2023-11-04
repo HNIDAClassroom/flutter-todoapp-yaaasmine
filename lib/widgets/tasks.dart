@@ -20,19 +20,19 @@ class _TasksState extends State<Tasks> {
     Task(
     title: 'Task 1',
     description: 'exemple of description of Task 1', 
-    date: DateTime.now(),
+    //date: DateTime.now(),
     category: Category.personal
     ),
     Task(
     title: 'Task 2',
     description: 'exemple of description of Task 2', 
-    date: DateTime.now(),
+   // date: DateTime.now(),
     category: Category.shopping
     ),
     Task(
     title: 'Task 3',
     description: 'exemple of description of Task 3', 
-    date: DateTime.now(),
+    //date: DateTime.now(),
     category: Category.work
     ),
     ];
@@ -76,7 +76,8 @@ void _openAddTaskOverlay() {
       body: Center(
         child: Column(
           children: [
-          Expanded(child: TasksList(tasks: _registredTasks)),],
+          Expanded(child: TasksList(tasks: _registredTasks)),
+],
         ),
       ),
     );
