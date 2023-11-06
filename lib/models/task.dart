@@ -8,12 +8,12 @@ class Task {
   final String id;
   final String title;
   final String description;
- // final DateTime date;
+ final DateTime? date;
   final Category category;
   Task({
     required this.title,
     required this.description,
-   // required this.date,
+   this.date,
     required this.category}) 
     : id = uuid.v4();
 }

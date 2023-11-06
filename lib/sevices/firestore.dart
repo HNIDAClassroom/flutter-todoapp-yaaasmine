@@ -10,7 +10,11 @@ class FirestoreService {
       {
         'taskTitle': task.title.toString(),
         'taskDesc': task.description.toString(),
-        'taskCategory': task.category.toString(),
+          'taskCategory': task.category.toString().split('.').last, 
+        'taskDate': task.date != null
+          ? Timestamp.fromDate(DateTime(
+              task.date!.year, task.date!.month, task.date!.day))
+          : null,
       },
     );
   }

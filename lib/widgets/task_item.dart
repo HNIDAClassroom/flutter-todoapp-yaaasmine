@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
-import 'package:uid/uid.dart';
 
 class TaskItem extends StatelessWidget {
   const TaskItem(this.task, {Key? key, required this.onDelete}) : super(key: key);
@@ -11,47 +9,72 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Move items to the ends
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.assignment), // Corrected the icon
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          task.title,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        Icon(
+                          Icons.task,
+                          color: Colors.indigo, // Customize icon color
                         ),
-                        SizedBox(height: 5),
-                        Text(task.description),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              task.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0, // Increase font size
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              task.description,
+                              style: TextStyle(
+                                color: Colors.grey, // Use a gray text color
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
+                    SizedBox(height: 10), // Increase spacing
+                    Text(
+                      'Category: ${task.category.name}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.indigo, // Customize category text color
+                      ),
+                    ),
+                    if (task.date != null) // Display the date if it's not null
+                      Text(
+                        'Date: ${task.date}',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.green, // Customize date text color
+                        ),
+                      ),
                   ],
                 ),
-                SizedBox(height: 5),
-                Text(
-                  'Category : ${task.category.name}',
-                  textAlign: TextAlign.left,
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red), // Customize delete icon color
+                  onPressed: () {
+                    onDelete(task);
+                  },
                 ),
               ],
             ),
-           IconButton(
-  icon: Icon(Icons.delete), // Delete icon
-  onPressed: () {
-    // Call the deleteTask function with the corresponding Task
-    onDelete(task);
-  },
-),
-
           ],
         ),
       ),
