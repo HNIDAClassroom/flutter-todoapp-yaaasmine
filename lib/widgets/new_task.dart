@@ -1,5 +1,4 @@
-
-                     import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
 
 class NewTask extends StatefulWidget {
@@ -54,24 +53,24 @@ class _NewTaskState extends State<NewTask> {
       );
       return;
     }
-if (_selectedCategory == null) {
-      // Handle this error condition if a category is not selected
+     if (_selectedDate == null) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Error'),
-          content: const Text('Please select a category for the task'),
+          content: const Text('Please select a date for the task'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(ctx);
               },
-              child: const Text('Okay'),
-            ),
-          ],
-        ));
+              child: const Text('Okay'),),
+            ],
+        ),
+        );
       return;
-    }
+     }
+
     // Check if a date is selected and format it as a string
 
     widget.onAddTask(

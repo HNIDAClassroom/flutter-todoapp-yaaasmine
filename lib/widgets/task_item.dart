@@ -1,79 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
 
-class TaskItem extends StatelessWidget {
+class TaskItem extends StatefulWidget {
   const TaskItem(this.task, {Key? key, required this.onDelete}) : super(key: key);
   final Task task;
   final void Function(Task) onDelete;
 
   @override
+  _TaskItemState createState() => _TaskItemState();
+}
+
+class _TaskItemState extends State<TaskItem> {
+  bool completed = false;
+
+  @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: const EdgeInsets.all(16.0),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.task,
-                          color: Colors.indigo, // Customize icon color
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              task.title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0, // Increase font size
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  completed = !completed; // Toggle the task completion status
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            completed ? Icons.check_box : Icons.check_box_outline_blank,
+                            color: completed ? Colors.green : Colors.grey, // Change icon color
+                          ),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.task.title,
+                                style: TextStyle(
+                                   
+                                  fontWeight: FontWeight.bold,
+                                  decoration: completed ? TextDecoration.lineThrough : null, // Add strikethrough
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              task.description,
-                              style: TextStyle(
-                                color: Colors.grey, // Use a gray text color
+                              SizedBox(height: 5),
+                              Text(
+                                widget.task.description,
+                            
+                                style: TextStyle( color: Colors.grey,decoration: completed ? TextDecoration.lineThrough : null), // Add strikethrough
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10), // Increase spacing
-                    Text(
-                      'Category: ${task.category.name}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Category: ${widget.task.category.name}',
+                        textAlign: TextAlign.left,
+                         style: TextStyle(
                         color: Colors.indigo, // Customize category text color
                       ),
-                    ),
-                    if (task.date != null) // Display the date if it's not null
-                      Text(
-                        'Date: ${task.date}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
+                      ),
+                      if (widget.task.date != null)
+                        Text(
+                          'Date: ${widget.task.date}',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
                           color: Colors.green, // Customize date text color
                         ),
-                      ),
-                  ],
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red), // Customize delete icon color
-                  onPressed: () {
-                    onDelete(task);
-                  },
-                ),
-              ],
+                        ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      widget.onDelete(widget.task);
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
