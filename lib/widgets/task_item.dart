@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
+import 'package:uid/uid.dart';
 
 class TaskItem extends StatelessWidget {
-  const TaskItem(this.task, {Key? key}) : super(key: key);
+  const TaskItem(this.task, {Key? key, required this.onDelete}) : super(key: key);
   final Task task;
+  final void Function(Task) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -11,36 +14,44 @@ class TaskItem extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Move items to the ends
           children: [
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.assignment), // Corrected the icon
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(task.title, style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 5),
-                      Text(task.description),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    const Icon(Icons.assignment), // Corrected the icon
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5),
+                        Text(task.description),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 30),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //Text('Date: ${task.date}', textAlign: TextAlign.left),
-                      SizedBox(height: 5),
-                      Text('Category : ${task.category.name}', textAlign: TextAlign.left),
-                    ],
-                  ),
+                SizedBox(height: 5),
+                Text(
+                  'Category : ${task.category.name}',
+                  textAlign: TextAlign.left,
                 ),
               ],
             ),
+           IconButton(
+  icon: Icon(Icons.delete), // Delete icon
+  onPressed: () {
+    // Call the deleteTask function with the corresponding Task
+    onDelete(task);
+  },
+),
+
           ],
         ),
       ),

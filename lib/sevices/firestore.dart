@@ -5,19 +5,31 @@ class FirestoreService {
   final CollectionReference tasks =
       FirebaseFirestore.instance.collection('tasks');
 
+  Future<void> addTask(Task task) {
+    return FirebaseFirestore.instance.collection('tasks').add(
+      {
+        'taskTitle': task.title.toString(),
+        'taskDesc': task.description.toString(),
+        'taskCategory': task.category.toString(),
+      },
+    );
+  }
 
-Future<void> addTask(Task task) {
-  return FirebaseFirestore.instance.collection('tasks').add(
-    {
-      'taskTitle': task.title.toString(),
-      'taskDesc': task.description.toString(),
-      'taskCategory': task.category.toString(),
-    },
-  );
+  Stream<QuerySnapshot> getTasks() {
+    final taskStream = tasks.snapshots();
+    return taskStream;
+  }
 
+ Future<void> deleteTask(Task task) {
+  return tasks
+      .where('taskTitle', isEqualTo: task.title)
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      doc.reference.delete();
+    });
+  });
 }
-Stream<QuerySnapshot> getTasks() {
-  final taskStream = tasks.snapshots();
-  return taskStream;
-}
+
+
 }

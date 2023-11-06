@@ -11,15 +11,15 @@ void main() async {
   );
 
   // Déconnexion de l'utilisateur actuel
-  //await FirebaseAuth.instance.signOut();)
+  //await FirebaseAuth.instance.signOut();
 
   runApp(
     MaterialApp(
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(elevation: 0),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
-            .copyWith(background: const Color.fromARGB(255, 230, 179, 187)),
-        scaffoldBackgroundColor: Color.fromARGB(255, 0, 0, 0),
+         appBarTheme: const AppBarTheme(elevation: 0),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+            .copyWith(background: Color.fromARGB(255, 150, 6, 30)),
+        scaffoldBackgroundColor: Color.fromARGB(255, 126, 126, 126)
       ),
       home: const AuthVerify(),
     ),
