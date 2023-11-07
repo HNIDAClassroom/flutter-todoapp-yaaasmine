@@ -3,6 +3,7 @@ import 'package:todolist_app/models/task.dart';
 import 'package:todolist_app/sevices/firestore.dart';
 import 'package:todolist_app/widgets/new_task.dart';
 import 'package:todolist_app/widgets/tasks_list.dart';
+import 'package:todolist_app/widgets/userprofilpage.dart';
 
 class Tasks extends StatefulWidget {
   const Tasks({Key? key});
@@ -35,6 +36,13 @@ void deleteTask(Task task) async {
 }
 
 
+Category? selectedCategory;
+
+void handleCategoryChanged(Category? newCategory) {
+  setState(() {
+    selectedCategory = newCategory;
+  });
+}
 
    void _addTask(Task task) async {
   setState(() {
@@ -71,11 +79,23 @@ void _openAddTaskOverlay() {
             ),
           ),
         ],
+        leading: IconButton( 
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfilePage()));
+
+          },
+          icon: Icon(Icons.account_circle),
+        ),
       ),
       body: Center(
         child: Column(
           children: [
-         Expanded(child: TasksList(onDelete: deleteTask)),
+         Expanded(child: TasksList(
+  onDelete: deleteTask,
+  selectedCategory: selectedCategory,
+  onCategoryChanged: handleCategoryChanged,
+)
+         )
           ]
         ),
       ),

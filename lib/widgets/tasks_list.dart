@@ -7,56 +7,104 @@ import 'package:todolist_app/widgets/task_item.dart';
 class TasksList extends StatelessWidget {
   final FirestoreService firestoreService = FirestoreService();
   final void Function(Task) onDelete;
+  final Category? selectedCategory;
+  
+  final void Function(Category?) onCategoryChanged; // Callback to handle category filter changes
 
-  TasksList({Key? key, required this.onDelete});
+  TasksList({Key? key, required this.onDelete, this.selectedCategory, required this.onCategoryChanged});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot?>(
-      stream: firestoreService.getTasks(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data == null) {
-          return CircularProgressIndicator(); // Loading indicator
-        }
+    return Column(
+      children: [
+        Align(alignment: Alignment.centerRight,
+        child:
+      
+        DropdownButton<Category>(
+          value: selectedCategory,
+          onChanged: (Category? newCategory) {
+            onCategoryChanged(newCategory); // Notify the parent widget about category changes
+          },
+          items: [
+            DropdownMenuItem<Category>(
+              value: null,
+              child: Text('All Categories'),
+            ),
+            for (Category category in Category.values)
+              DropdownMenuItem<Category>(
+                value: category,
+                child: Text(category.name),
+              ),
+          ],
+        ),),
+        Expanded(
+          child: StreamBuilder<QuerySnapshot?>(
+            stream: firestoreService.getTasks(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.data == null) {
+                return CircularProgressIndicator(); // Loading indicator
+              }
 
-        final taskLists = snapshot.data!.docs;
+              final taskLists = snapshot.data!.docs;
 
-        return ListView.builder(
-          itemCount: taskLists.length,
-          itemBuilder: (ctx, index) {
-            DocumentSnapshot document = taskLists[index];
-            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-            String title = data['taskTitle'];
-            String description = data['taskDesc'];
-            String categoryString = data['taskCategory'];
-            Timestamp dateTimestamp = data['taskDate'];
+              final filteredTasks = taskLists.where((document) {
+                final data = document.data() as Map<String, dynamic>;
+                final categoryString = data['taskCategory'];
+              
 
+                Category category;
+                if (categoryString != null) {
+                  category = Category.values.firstWhere(
+                    (cat) => cat.toString() == 'Category.$categoryString',
+                    orElse: () => Category.others,
+                  );
+                } else {
+                  category = Category.others;
+                }
+
+                return (selectedCategory == null || category == selectedCategory) ;
+              });
           
 
-Category category;
-if (categoryString != null) {
-  category = Category.values
-      .firstWhere((cat) => cat.toString() == 'Category.$categoryString', orElse: () => Category.others);
-} else {
-  category = Category.others;
-}
+              return ListView.builder(
+                itemCount: filteredTasks.length,
+                itemBuilder: (ctx, index) {
+                  DocumentSnapshot document = filteredTasks.elementAt(index);
+                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                  String title = data['taskTitle'];
+                  String description = data['taskDesc'];
+                  String categoryString = data['taskCategory'];
+                  Timestamp dateTimestamp = data['taskDate'];
 
-            // Convert the Firestore Timestamp back to DateTime
-            DateTime? date = dateTimestamp != null
-                ? (dateTimestamp as Timestamp).toDate()
-                : null;
+                  // Convert the Firestore Timestamp back to DateTime
+                  DateTime? date = dateTimestamp != null
+                      ? (dateTimestamp as Timestamp).toDate()
+                      : null;
 
-            Task task = Task(
-              title: title,
-              description: description,
-              category: category,
-              date: date, // Use the retrieved date from Firestore
-            );
+                  Category category;
+                  if (categoryString != null) {
+                    category = Category.values.firstWhere(
+                      (cat) => cat.toString() == 'Category.$categoryString',
+                      orElse: () => Category.others,
+                    );
+                  } else {
+                    category = Category.others;
+                  }
 
-            return TaskItem(task, onDelete: onDelete);
-          },
-        );
-      },
+                  Task task = Task(
+                    title: title,
+                    description: description,
+                    category: category,
+                    date: date,
+                  );
+
+                  return TaskItem(task, onDelete: onDelete);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
