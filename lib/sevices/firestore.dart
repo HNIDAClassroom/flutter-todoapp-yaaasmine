@@ -5,7 +5,7 @@ class FirestoreService {
   final CollectionReference tasks =
       FirebaseFirestore.instance.collection('tasks');
 
-  Future<void> addTask(Task task) {
+    Future<void> addTask(Task task) {
     return FirebaseFirestore.instance.collection('tasks').add(
       {
         'taskTitle': task.title.toString(),
@@ -16,9 +16,8 @@ class FirestoreService {
               task.date!.year, task.date!.month, task.date!.day))
           : null,
       },
-    );
+    );  
   }
-
   Stream<QuerySnapshot> getTasks() {
     final taskStream = tasks.snapshots();
     return taskStream;
@@ -34,6 +33,18 @@ class FirestoreService {
     });
   });
 }
+ Future<void> TaskDone(String taskTitle, bool done) async {
+  try {
+    final querySnapshot = await tasks.where('taskTitle', isEqualTo: taskTitle).get();
 
-
+    if (querySnapshot.docs.isNotEmpty) {
+      final taskDoc = querySnapshot.docs.first.reference;
+      await taskDoc.update({'completed': done});
+    } else {
+      print('No document: $taskTitle');
+    }
+  } catch (e) {
+    print('Error updating document: $e');
+  }
+}
 }

@@ -31,7 +31,6 @@ class AuthVerify extends StatelessWidget {
             );
           }
         }
-       // return CircularProgressIndicator(); // You can show a loading indicator here.
         
         return const Tasks();
       },

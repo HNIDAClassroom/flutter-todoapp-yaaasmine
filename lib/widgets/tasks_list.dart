@@ -9,7 +9,7 @@ class TasksList extends StatelessWidget {
   final void Function(Task) onDelete;
   final Category? selectedCategory;
   
-  final void Function(Category?) onCategoryChanged; // Callback to handle category filter changes
+  final void Function(Category?) onCategoryChanged; 
 
   TasksList({Key? key, required this.onDelete, this.selectedCategory, required this.onCategoryChanged});
 

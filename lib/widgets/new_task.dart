@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
 
 class NewTask extends StatefulWidget {
+  
   const NewTask({Key? key, required this.onAddTask});
   final void Function(Task task) onAddTask;
 
@@ -21,8 +22,8 @@ class _NewTaskState extends State<NewTask> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2023), // Set the earliest selectable date
-      lastDate: DateTime(2101), // Set the latest selectable date
+      firstDate: DateTime(2023), 
+      lastDate: DateTime(2101), 
     );
 
     if (picked != null) {
@@ -34,7 +35,6 @@ class _NewTaskState extends State<NewTask> {
 
   void _submitTaskData() {
     final String title = _titleController.text;
-    final String description = _descriptionController.text;
     if (title.trim().isEmpty) {
       showDialog(
         context: context,
@@ -71,7 +71,6 @@ class _NewTaskState extends State<NewTask> {
       return;
      }
 
-    // Check if a date is selected and format it as a string
 
     widget.onAddTask(
       Task(
@@ -82,12 +81,7 @@ class _NewTaskState extends State<NewTask> {
       ),
     );
 
-    // Clear the form fields and selected date after adding the task
-    _titleController.clear();
-    _descriptionController.clear();
-    setState(() {
-      _selectedDate = null;
-    });
+ 
   }
 
   @override

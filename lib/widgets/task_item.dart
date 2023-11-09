@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/task.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todolist_app/sevices/firestore.dart';
 
 class TaskItem extends StatefulWidget {
-  const TaskItem(this.task, {Key? key, required this.onDelete})
-      : super(key: key);
+  final FirestoreService firestoreService = FirestoreService();
+  TaskItem(this.task, {Key? key, required this.onDelete}) : super(key: key);
   final Task task;
   final void Function(Task) onDelete;
 
@@ -13,14 +15,31 @@ class TaskItem extends StatefulWidget {
 }
 
 class _TaskItemState extends State<TaskItem> {
-  bool completed = false;
+  bool done = false;
+
+  @override
+  void initState() {
+    super.initState();
+    doneState();
+  }
+
+  void doneState() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      done = prefs.getBool(widget.task.title) ?? false;
+    });
+  }
+
+  void saveState(bool completed) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(widget.task.title, completed);
+  }
 
   @override
   Widget build(BuildContext context) {
     final formattedDate = widget.task.date != null
         ? DateFormat.yMMMd().format(widget.task.date!)
         : 'No date';
-    print('Date: ${widget.task.date}');
     return Card(
       margin: const EdgeInsets.all(16.0),
       child: Padding(
@@ -28,85 +47,72 @@ class _TaskItemState extends State<TaskItem> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  completed = !completed; // Toggle the task completion status
-                });
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              completed
-                                  ? Icons.check_box
-                                  : Icons.check_box_outline_blank,
-                              color: completed
-                                  ? Colors.green
-                                  : Colors.grey, // Change icon color
-                            ),
-                            const SizedBox(width: 10),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.task.title,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      decoration: completed
-                                          ? TextDecoration.lineThrough
-                                          : null, // Add strikethrough
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    widget.task.description,
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      decoration: completed
-                                          ? TextDecoration.lineThrough
-                                          : null, // Add strikethrough
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+            Row(
+              children: [
+                Checkbox(
+                  value: done,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      done = value ?? false;
+                      saveState(done);
+                      widget.firestoreService.TaskDone(
+                        widget.task.title,
+                        done,
+                      );
+                    });
+                  },
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.task.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: done ? TextDecoration.lineThrough : null,
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Category: ${widget.task.category.name}',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: Colors.indigo, // Customize category text color
-                          ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        widget.task.description,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          decoration: done ? TextDecoration.lineThrough : null,
                         ),
-                        if (widget.task.date != null)
-                          Text(
-                            'Date: $formattedDate',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.green, // Customize date text color
-                            ),
-                          ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      widget.onDelete(widget.task);
-                    },
-                  ),
-                ],
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            Text(
+              'Category: ${widget.task.category.name}',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.indigo,
               ),
+            ),
+            if (widget.task.date != null)
+              Text(
+                'Date: $formattedDate',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Colors.green,
+                ),
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    widget.onDelete(widget.task);
+                  },
+                ),
+              ],
             ),
           ],
         ),

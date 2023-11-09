@@ -14,90 +14,81 @@ class Tasks extends StatefulWidget {
   }
 }
 
- 
 class _TasksState extends State<Tasks> {
-   final FirestoreService firestoreService= FirestoreService();
- 
-void deleteTask(Task task) async {
-  try {
-    print('Deleting task: ${task.title}');
+  final FirestoreService firestoreService = FirestoreService();
 
-    // Call the deleteTask method to remove the task from Firestore
-    await firestoreService.deleteTask(task);
-
-    print('Task deleted from Firestore');
-
-    // Call setState to rebuild the widget and reflect the changes
-    setState(() {});
-  } catch (e) {
-    // Handle any errors here, e.g., show an error message
-    print("Error deleting task: $e");
+  void deleteTask(Task task) async {
+    try {
+      await firestoreService.deleteTask(task);
+      setState(() {});
+    } catch (e) {
+      print("Error deleting task: $e");
+    }
   }
-}
 
+  Category? selectedCategory;
+  void handleCategoryChanged(Category? newCategory) {
+    setState(() {
+      selectedCategory = newCategory;
+    });
+  }
 
-Category? selectedCategory;
+  void _addTask(Task task) async {
+    setState(() {
+      firestoreService.addTask(task);
+      Navigator.pop(context);
+    });
+  }
 
-void handleCategoryChanged(Category? newCategory) {
-  setState(() {
-    selectedCategory = newCategory;
-  });
-}
-
-   void _addTask(Task task) async {
-  setState(() {
-  
-    firestoreService.addTask(task);
-    Navigator.pop(context);
-  });
-}
-
-void _openAddTaskOverlay() {
-  showModalBottomSheet(
-    context: context,
-    builder: (ctx) => NewTask(onAddTask: _addTask),
-  );
-}
-
+  void _openAddTaskOverlay() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => NewTask(onAddTask: _addTask),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar : AppBar(
-        title: const Center(child : Text('ToDoList App'),),
+      appBar: AppBar(
+        title: const Center(
+          child: Text('ToDoList App'),
+        ),
         actions: [
           IconButton(
-          onPressed: _openAddTaskOverlay,
-          icon: Ink(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-               color: Color.fromARGB(255, 200, 137, 255),
+            onPressed: _openAddTaskOverlay,
+            icon: Ink(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(255, 200, 137, 255),
               ),
-            child : const Padding (padding : EdgeInsets.all(5),
-            child: Icon(Icons.add,color: Colors.white,),
-            ),
+              child: const Padding(
+                padding: EdgeInsets.all(5),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
         ],
-        leading: IconButton( 
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfilePage()));
-
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserProfilePage()));
           },
           icon: Icon(Icons.account_circle),
         ),
       ),
       body: Center(
-        child: Column(
-          children: [
-         Expanded(child: TasksList(
-  onDelete: deleteTask,
-  selectedCategory: selectedCategory,
-  onCategoryChanged: handleCategoryChanged,
-)
-         )
-          ]
-        ),
+        child: Column(children: [
+          Expanded(
+              child: TasksList(
+            onDelete: deleteTask,
+            selectedCategory: selectedCategory,
+            onCategoryChanged: handleCategoryChanged,
+          ))
+        ]),
       ),
     );
   }
