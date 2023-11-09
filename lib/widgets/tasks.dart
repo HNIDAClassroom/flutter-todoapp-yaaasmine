@@ -74,7 +74,7 @@ void _openAddTaskOverlay() {
                color: Color.fromARGB(255, 200, 137, 255),
               ),
             child : const Padding (padding : EdgeInsets.all(5),
-            child: Icon(Icons.add,color: Colors.white10,),
+            child: Icon(Icons.add,color: Colors.white,),
             ),
             ),
           ),

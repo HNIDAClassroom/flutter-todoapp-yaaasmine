@@ -16,4 +16,6 @@ class Task {
    this.date,
     required this.category}) 
     : id = uuid.v4();
+
+  set completed(bool completed) {}
 }
