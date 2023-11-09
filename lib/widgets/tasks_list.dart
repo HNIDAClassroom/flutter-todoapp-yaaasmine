@@ -23,7 +23,7 @@ class TasksList extends StatelessWidget {
         DropdownButton<Category>(
           value: selectedCategory,
           onChanged: (Category? newCategory) {
-            onCategoryChanged(newCategory); // Notify the parent widget about category changes
+            onCategoryChanged(newCategory);
           },
           items: [
             DropdownMenuItem<Category>(
@@ -42,7 +42,7 @@ class TasksList extends StatelessWidget {
             stream: firestoreService.getTasks(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data == null) {
-                return CircularProgressIndicator(); // Loading indicator
+                return CircularProgressIndicator();
               }
 
               final taskLists = snapshot.data!.docs;
@@ -76,7 +76,6 @@ class TasksList extends StatelessWidget {
                   String categoryString = data['taskCategory'];
                   Timestamp dateTimestamp = data['taskDate'];
 
-                  // Convert the Firestore Timestamp back to DateTime
                   DateTime? date = dateTimestamp != null
                       ? (dateTimestamp as Timestamp).toDate()
                       : null;

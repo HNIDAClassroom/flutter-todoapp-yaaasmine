@@ -10,7 +10,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Déconnexion de l'utilisateur actuel
   //await FirebaseAuth.instance.signOut();
 
   runApp(

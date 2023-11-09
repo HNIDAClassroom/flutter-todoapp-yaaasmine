@@ -16,7 +16,7 @@ class _NewTaskState extends State<NewTask> {
   Category _selectedCategory = Category.personal;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  DateTime? _selectedDate; // Use a nullable DateTime
+  DateTime? _selectedDate; 
 
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
